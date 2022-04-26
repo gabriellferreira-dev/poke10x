@@ -24,12 +24,15 @@
         "import"
     ],
     "rules": {
-        "import/no-unresolved": "error"
+        "import/no-unresolved": "error",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off"
     },
     "settings": {
         "import/resolver": {
           "typescript": {
-            "alwaysTryTypes": true,
+            "alwaysTryTypes": true
           }
         },
         "import/parsers": {

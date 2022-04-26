@@ -19,8 +19,8 @@ export const Background = ({ pokemon }: Props) => {
       backgroundImage={`url(${data?.sprites?.other['official-artwork']?.front_default})`}
       position="fixed"
       bgRepeat="no-repeat"
-      bgPosition="center center"
-      bgSize="cover"
+      bgPosition="center"
+      bgSize="200%"
       zIndex="-1"
       filter="auto"
       blur="400px"

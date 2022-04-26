@@ -11,12 +11,12 @@ const PokeThumb = ({ pokemon, setCurrentPokemon }: Props) => {
   return (
     <Box
       onClick={() => setCurrentPokemon(pokemon)}
-      flex="1 0 21%"
+      flex="1 0 31%"
       justifyContent="center"
       padding="25px 0"
       display="flex"
       _hover={{
-        bg: 'rgba(250, 250, 250, 0.1)',
+        bg: 'rgba(250, 250, 250, 0.3)',
       }}
     >
       <Image

@@ -13,5 +13,6 @@ export const getPokemons = async (limit: number, offset: number) => {
 
 export const getPokemon = async (url: string) => {
   const response = await axios.get(url);
+  console.log(response);
   return response.data;
 };

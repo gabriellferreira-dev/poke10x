@@ -1,21 +1,12 @@
-import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  HStack,
-  Image,
-  VStack,
-} from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { Box, Button, Heading, HStack, Image, VStack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import usePoke from '../../hooks/usePoke';
-import { InitialPoke } from '../../types/pokes';
+import { Result } from '../../types/pokes';
 import pokemonsTypesIcons from '../../utils/pokemonsTypesIcons';
-import { Background } from '../Background';
 
 type Props = {
-  pokemon: InitialPoke;
+  pokemon: Result;
 };
 
 export const PokePreview = ({ pokemon }: Props) => {
@@ -28,7 +19,6 @@ export const PokePreview = ({ pokemon }: Props) => {
       setContainerHeight(containerHeight - position);
     }
   };
-  console.log(containerHeight);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -40,7 +30,13 @@ export const PokePreview = ({ pokemon }: Props) => {
 
   return (
     <Box
-      backgroundImage={`url(${data?.sprites?.other['official-artwork']?.front_default})`}
+      backgroundImage={`url(${
+        data?.sprites?.other['official-artwork']?.front_default ||
+        data?.sprites.other.home.front_default ||
+        data?.sprites.front_default ||
+        data?.sprites.front_shiny ||
+        `https://res.cloudinary.com/dqau9rdok/image/upload/v1651081043/gifs_pokemons/${pokemon.name}.gif`
+      })`}
       bgRepeat="no-repeat"
       bgSize="300%"
       bgPosition="center"
@@ -64,7 +60,13 @@ export const PokePreview = ({ pokemon }: Props) => {
       >
         <HStack>
           <Image
-            src={data?.sprites?.other['official-artwork']?.front_default}
+            src={
+              data?.sprites?.other['official-artwork']?.front_default ||
+              data?.sprites.other.home.front_default ||
+              data?.sprites.front_default ||
+              data?.sprites.front_shiny ||
+              `https://res.cloudinary.com/dqau9rdok/image/upload/v1651081043/gifs_pokemons/${pokemon.name}.gif`
+            }
             alt={pokemon.name}
             maxW={containerHeight <= 350 ? '200px' : '300px'}
             transition="0.2s ease-in-out"
@@ -98,7 +100,7 @@ export const PokePreview = ({ pokemon }: Props) => {
             as="h2"
             size={containerHeight <= 350 ? 'xl' : '2xl'}
             textTransform="uppercase"
-            bg={`linear-gradient(90deg, rgba(18, 18, 17, 0) 0%, #121212 100%), url(${data?.sprites?.other['official-artwork']?.front_default})`}
+            bg={`linear-gradient(90deg, #fafafa 0%, #121212 100%), url(${data?.sprites?.other['official-artwork']?.front_default})`}
             bgPosition="center"
             bgSize="2000%"
             filter="auto"

@@ -1,47 +1,85 @@
-import { Heading, HStack, Image, VStack } from '@chakra-ui/react';
-import { useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import { Button, HStack, VStack } from '@chakra-ui/react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { useInfiniteQuery } from 'react-query';
 import { Background } from '../../components/Background';
 import { PokePreview } from '../../components/PokePreview';
 import PokeThumb from '../../components/PokeThumb';
 import { getPokemons } from '../../services/api';
-import { InitialPoke } from '../../types/pokes';
+import { PokemonsResponse, Result } from '../../types/pokes';
 
 export default function Home() {
-  const [pokeLimit, setPokeLimit] = useState<number>(10);
-  const [currentPokemon, setCurrentPokemon] = useState<InitialPoke | null>(
-    null
-  );
+  const [currentPokemon, setCurrentPokemon] = useState<Result | null>(null);
 
-  const { data: pokemons, refetch } = useQuery<InitialPoke[]>(
-    'pokemons',
-    async () => getPokemons(pokeLimit, 0)
-  );
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery<PokemonsResponse>(['pokemons'], getPokemons, {
+      getNextPageParam: (lastPage) => lastPage.next,
+    });
+
+  const loadMoreButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!hasNextPage) {
+      return;
+    }
+    const observer = new IntersectionObserver((entries) =>
+      entries.forEach((entry) => {
+        console.log(entry);
+        if (entry.isIntersecting) {
+          fetchNextPage();
+        }
+      })
+    );
+    const el = loadMoreButtonRef && loadMoreButtonRef.current;
+    if (!el) {
+      return;
+    }
+    observer.observe(el);
+    return () => {
+      observer.unobserve(el);
+    };
+  }, [loadMoreButtonRef.current, hasNextPage]);
 
   return (
     <VStack width="100%">
-      {pokemons && (
-        <PokePreview pokemon={currentPokemon ? currentPokemon : pokemons[0]} />
+      {data && (
+        <PokePreview
+          pokemon={currentPokemon ? currentPokemon : data.pages[0].results[0]}
+        />
       )}
       <HStack
         wrap="wrap"
         width="100%"
-        // height="100%"
         justifyContent="space-between"
         bgColor="rgba(250, 250, 250, 0.1)"
         marginTop="500px !important"
-        // overflowY="auto"
       >
-        {pokemons?.map((pokemon, i) => (
-          <PokeThumb
-            key={i}
-            pokemon={pokemon}
-            setCurrentPokemon={setCurrentPokemon}
-          />
+        {data?.pages.map((page, i) => (
+          <Fragment key={i}>
+            {page.results.map((pokemon, i) => (
+              <PokeThumb
+                key={i}
+                pokemon={pokemon}
+                setCurrentPokemon={setCurrentPokemon}
+              />
+            ))}
+          </Fragment>
         ))}
       </HStack>
-      {pokemons && (
-        <Background pokemon={currentPokemon ? currentPokemon : pokemons[0]} />
+      <Button
+        ref={loadMoreButtonRef}
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetchingNextPage}
+      >
+        {isFetchingNextPage
+          ? 'Carregando mais...'
+          : hasNextPage
+          ? 'Carregar mais'
+          : 'Não há mais pokemons para carregar!'}
+      </Button>
+      {data && (
+        <Background
+          pokemon={currentPokemon ? currentPokemon : data.pages[0].results[0]}
+        />
       )}
     </VStack>
   );

@@ -1,10 +1,9 @@
-import { Box, HStack, Image } from '@chakra-ui/react';
-import { useQuery } from 'react-query';
-import { InitialPoke } from '../../types/pokes';
+import { Box, Image } from '@chakra-ui/react';
+import { Result } from '../../types/pokes';
 
 type Props = {
-  pokemon: InitialPoke;
-  setCurrentPokemon: (value: InitialPoke) => void;
+  pokemon: Result;
+  setCurrentPokemon: (value: Result) => void;
 };
 
 const PokeThumb = ({ pokemon, setCurrentPokemon }: Props) => {
@@ -20,8 +19,9 @@ const PokeThumb = ({ pokemon, setCurrentPokemon }: Props) => {
       }}
     >
       <Image
-        src={`https://res.cloudinary.com/dqau9rdok/image/upload/v1650927255/pokes/${pokemon.name}.gif`}
+        src={`https://res.cloudinary.com/dqau9rdok/image/upload/v1651081043/gifs_pokemons/${pokemon.name}.gif`}
         alt={pokemon.name}
+        maxW="100px"
       />
     </Box>
   );

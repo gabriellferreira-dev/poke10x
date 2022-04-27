@@ -1,22 +1,23 @@
-import { Box, Image } from '@chakra-ui/react';
-import { useQuery } from 'react-query';
+import { Box } from '@chakra-ui/react';
 import usePoke from '../../hooks/usePoke';
-import { getPokemon } from '../../services/api';
-import { InitialPoke } from '../../types/pokes';
+import { Result } from '../../types/pokes';
 
 type Props = {
-  pokemon: InitialPoke;
+  pokemon: Result;
 };
 
 export const Background = ({ pokemon }: Props) => {
-  console.log(pokemon);
   const { data } = usePoke(pokemon.name, pokemon.url);
-
-  console.log(data);
 
   return (
     <Box
-      backgroundImage={`url(${data?.sprites?.other['official-artwork']?.front_default})`}
+      backgroundImage={`url(${
+        data?.sprites?.other['official-artwork']?.front_default ||
+        data?.sprites.other.home.front_default ||
+        data?.sprites.front_default ||
+        data?.sprites.front_shiny ||
+        `https://res.cloudinary.com/dqau9rdok/image/upload/v1651081043/gifs_pokemons/${pokemon.name}.gif`
+      })`}
       position="fixed"
       bgRepeat="no-repeat"
       bgPosition="center"

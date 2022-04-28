@@ -1,4 +1,14 @@
-import { Box, Button, Heading, HStack, Image, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  Skeleton,
+  useMediaQuery,
+  VStack,
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import usePoke from '../../hooks/usePoke';
@@ -13,10 +23,16 @@ export const PokePreview = ({ pokemon }: Props) => {
   const { data } = usePoke(pokemon.name, pokemon.url);
   const [containerHeight, setContainerHeight] = useState(500);
 
+  const [isMobileView] = useMediaQuery(
+    '(min-width: 320px) and (max-width: 768px)'
+  );
+
   const handleScroll = () => {
     const position = window.pageYOffset;
-    if (containerHeight - position >= 250) {
-      setContainerHeight(containerHeight - position);
+    if (position >= 150) {
+      setContainerHeight(350);
+    } else {
+      setContainerHeight(500);
     }
   };
 
@@ -50,7 +66,8 @@ export const PokePreview = ({ pokemon }: Props) => {
       boxShadow="0px 2px 2px rgba(0, 0, 0, 0.25)"
       borderRadius="0 0 20px 20px"
     >
-      <HStack
+      <Flex
+        direction={isMobileView ? 'column' : 'row'}
         width="100%"
         padding="80px 0"
         height="100%"
@@ -58,20 +75,74 @@ export const PokePreview = ({ pokemon }: Props) => {
         backdropFilter="auto"
         backdropBlur="200px"
       >
-        <HStack>
-          <Image
-            src={
-              data?.sprites?.other['official-artwork']?.front_default ||
-              data?.sprites.other.home.front_default ||
-              data?.sprites.front_default ||
-              data?.sprites.front_shiny ||
-              `https://res.cloudinary.com/dqau9rdok/image/upload/v1651081043/gifs_pokemons/${pokemon.name}.gif`
+        <HStack justifyContent="center">
+          <Skeleton
+            isLoaded={!!data}
+            w={
+              isMobileView
+                ? containerHeight <= 350
+                  ? '190px'
+                  : '250px'
+                : containerHeight <= 350
+                ? '200px'
+                : '300px'
             }
-            alt={pokemon.name}
-            maxW={containerHeight <= 350 ? '200px' : '300px'}
-            transition="0.2s ease-in-out"
-          />
+            h={
+              isMobileView
+                ? containerHeight <= 350
+                  ? '190px'
+                  : '250px'
+                : containerHeight <= 350
+                ? '200px'
+                : '300px'
+            }
+            startColor="#ffffff3b"
+            endColor="#560b0ba0"
+          >
+            <Image
+              src={
+                data?.sprites?.other['official-artwork']?.front_default ||
+                data?.sprites.other.home.front_default ||
+                data?.sprites.front_default ||
+                data?.sprites.front_shiny ||
+                `https://res.cloudinary.com/dqau9rdok/image/upload/v1651081043/gifs_pokemons/${pokemon.name}.gif`
+              }
+              alt={pokemon.name}
+              maxW={
+                isMobileView
+                  ? containerHeight <= 350
+                    ? '190px'
+                    : '250px'
+                  : containerHeight <= 350
+                  ? '200px'
+                  : '300px'
+              }
+              transition="0.2s ease-in-out"
+            />
+          </Skeleton>
           <VStack>
+            {!data && (
+              <>
+                <Skeleton
+                  height="40px"
+                  w="40px"
+                  startColor="#ffffff3b"
+                  endColor="#560b0ba0"
+                />
+                <Skeleton
+                  height="40px"
+                  w="40px"
+                  startColor="#ffffff3b"
+                  endColor="#560b0ba0"
+                />
+                <Skeleton
+                  height="40px"
+                  w="40px"
+                  startColor="#ffffff3b"
+                  endColor="#560b0ba0"
+                />
+              </>
+            )}
             {data &&
               data.types.map((value, i) => (
                 <Image
@@ -85,36 +156,60 @@ export const PokePreview = ({ pokemon }: Props) => {
           </VStack>
         </HStack>
         <VStack justifyContent="center">
-          <Heading
-            as="h1"
-            size={containerHeight <= 350 ? '2xl' : '4xl'}
-            transition="0.2s ease-in-out"
-            fontFamily="Pokemon Solid Normal"
-            letterSpacing="10px"
+          <Skeleton
+            isLoaded={!!data}
+            startColor="#ffffff3b"
+            endColor="#560b0ba0"
             marginBottom={containerHeight <= 350 ? '50px' : '100px'}
-            color="rgba(124, 25, 25, 0.35)"
+            position={isMobileView ? 'absolute' : 'relative'}
+            top="30px"
+            display={isMobileView ? 'none' : 'block'}
           >
-            POKEDEX
-          </Heading>
-          <Heading
-            as="h2"
-            size={containerHeight <= 350 ? 'xl' : '2xl'}
-            textTransform="uppercase"
-            color="#fff"
-            marginBottom="20px"
-          >
-            {data?.name}
-          </Heading>
-          <Link to={`/${data?.name}`}>
-            <Button
-              size={containerHeight <= 350 ? 'md' : 'lg'}
-              colorScheme="teal"
+            <Heading
+              as="h1"
+              size={containerHeight <= 350 ? '2xl' : '4xl'}
+              transition="0.2s ease-in-out"
+              fontFamily="Pokemon Solid Normal"
+              letterSpacing="10px"
+              color="rgba(124, 25, 25, 0.35)"
             >
-              Ver Pokemon
-            </Button>
-          </Link>
+              POKE10X
+            </Heading>
+          </Skeleton>
+          <Skeleton
+            isLoaded={!!data}
+            startColor="#ffffff3b"
+            endColor="#560b0ba0"
+            minW="300px"
+            minH="40px"
+            textAlign="center"
+          >
+            <Heading
+              as="h2"
+              size={containerHeight <= 350 ? 'xl' : '2xl'}
+              textTransform="uppercase"
+              color="#fff"
+              marginBottom={isMobileView ? '10px' : '20px'}
+            >
+              {data?.name}
+            </Heading>
+          </Skeleton>
+          <Skeleton
+            isLoaded={!!data}
+            startColor="#ffffff3b"
+            endColor="#560b0ba0"
+          >
+            <Link to={`/${data?.name}`}>
+              <Button
+                size={containerHeight <= 350 ? 'md' : 'lg'}
+                colorScheme="teal"
+              >
+                Ver Pokemon
+              </Button>
+            </Link>
+          </Skeleton>
         </VStack>
-      </HStack>
+      </Flex>
     </Box>
   );
 };

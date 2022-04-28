@@ -100,11 +100,7 @@ export const PokePreview = ({ pokemon }: Props) => {
             as="h2"
             size={containerHeight <= 350 ? 'xl' : '2xl'}
             textTransform="uppercase"
-            bg={`linear-gradient(90deg, #fafafa 0%, #121212 100%), url(${data?.sprites?.other['official-artwork']?.front_default})`}
-            bgPosition="center"
-            bgSize="2000%"
-            filter="auto"
-            bgClip="text"
+            color="#fff"
             marginBottom="20px"
           >
             {data?.name}
